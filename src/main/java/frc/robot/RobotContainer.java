@@ -34,8 +34,6 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
-import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-//import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import java.util.List;
 
@@ -44,15 +42,12 @@ import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.path.PathPlannerPath;
 
-//import org.ejml.dense.row.CommonOps_MT_CDRM;
 
 public class RobotContainer {
     
     private final CANRollerSubsystem m_roller = new CANRollerSubsystem();
   // robot's subsystems
     private final DriveSubsystem m_robotDrive = new DriveSubsystem();
-  // driver's controller
-  XboxController m_driverController = new XboxController(OIConstants.kDriverControllerPort);
   
     private final SendableChooser<Command> autoChooser; //HERE IT IS
   // the container for the robot. Contains subsystems, OI devices, and commands.
@@ -65,18 +60,6 @@ public class RobotContainer {
         configureButtonBindings();
         autoChooser = AutoBuilder.buildAutoChooser("New New Auto"); //HERE IT IS
         SmartDashboard.putData("AutoChoosing", autoChooser);
-
-        m_robotDrive.setDefaultCommand(
-            // the left stick controls translation of the robot.
-            // turning is controlled by the X axis of the right stick.
-            new RunCommand(
-                () -> m_robotDrive.drive(
-                    -MathUtil.applyDeadband(m_driverController.getLeftY(), OIConstants.kDriveDeadband),
-                    -MathUtil.applyDeadband(m_driverController.getLeftX(), OIConstants.kDriveDeadband),
-                    -MathUtil.applyDeadband(m_driverController.getRightX(), OIConstants.kDriveDeadband),
-                    true),
-                m_robotDrive));
-
   }
 
   /**
@@ -90,24 +73,7 @@ public class RobotContainer {
 
   // this button makes robot stop moving
     private void configureButtonBindings() {
-    /*
-    new JoystickButton(m_driverController, XboxController.Axis.kLeftTrigger.value)
-        .whileTrue(new RunCommand(
-            () -> m_robotDrive.setX(),
-            m_robotDrive));
-    */
-    new CommandXboxController(0).leftTrigger(.2).whileTrue(new RunCommand(() -> m_robotDrive.setX(), m_robotDrive));
-    new JoystickButton(m_driverController, XboxController.Button.kLeftBumper.value)
-        .onTrue(new InstantCommand(() -> m_robotDrive.speedDecrease(), m_robotDrive));
-    new JoystickButton(m_driverController, XboxController.Button.kRightBumper.value)
-        .onTrue(new InstantCommand(() -> m_robotDrive.speedIncrease(), m_robotDrive));
-    new JoystickButton(m_driverController, XboxController.Button.kA.value)
-        .whileTrue(new StartEndCommand (() -> m_roller.setVoltage(0.3), () -> m_roller.setVoltage(0), m_roller));
-    new JoystickButton(m_driverController, XboxController.Button.kB.value)
-        .whileTrue(new RunCommand(() -> m_robotDrive.zeroHeading(), m_robotDrive));
-    new JoystickButton(m_driverController, XboxController.Button.kY.value)
-        .whileTrue(new StartEndCommand (() -> m_roller.setVoltage(-0.3), () -> m_roller.setVoltage(0), m_roller));
-    
+
   }
 
     public Command auto2(){
